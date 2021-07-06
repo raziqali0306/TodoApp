@@ -12,7 +12,7 @@ const Task = props => {
 const styles = StyleSheet.create({
   taskContainer: {
     paddingVertical: 8,
-    backgroundColor: '#0f0f0f',
+    // backgroundColor: '#0f0f0f',
     margin: 8,
   },
   text: {
