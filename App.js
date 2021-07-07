@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   StyleSheet,
   Text,
@@ -32,13 +32,13 @@ const App = () => {
     }
   }, [taskItems]);
 
-  const addTextHandler = async () => {
+  const addTextHandler = () => {
     Keyboard.dismiss();
     setTaskItems([...taskItems, task]);
     setTask(null);
   };
 
-  const removeTask = async index => {
+  const removeTask = index => {
     let itemsCopy = [...taskItems];
     itemsCopy.splice(index, 1);
     setTaskItems(itemsCopy);
@@ -89,7 +89,6 @@ const App = () => {
 const styles = StyleSheet.create({
   // Todo
   container: {
-    color: '#000000',
     flex: 1,
     backgroundColor: '#F9F9F9',
   },
@@ -109,7 +108,6 @@ const styles = StyleSheet.create({
   },
 
   // Tasks
-
   TaskinputContainer: {
     marginTop: 15,
     position: 'absolute',
