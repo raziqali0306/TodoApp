@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   Text,
@@ -10,21 +10,41 @@ import {
   ScrollView,
 } from 'react-native';
 import Task from './Components/Task';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const App = () => {
-  const [task, setTask] = useState();
+  const [task, setTask] = useState('');
   const [taskItems, setTaskItems] = useState([]);
 
-  const addTextHandler = () => {
+  useEffect(async () => {
+    let items = [];
+    items = JSON.parse(await AsyncStorage.getItem('tasks'));
+    console.log(items);
+    if (items != null) {
+      setTaskItems(items);
+    }
+  }, []);
+
+  const addTextHandler = async () => {
     Keyboard.dismiss();
     setTaskItems([...taskItems, task]);
     setTask(null);
+    // updateData();
   };
 
-  const removeTask = index => {
+  const removeTask = async index => {
     let itemsCopy = [...taskItems];
     itemsCopy.splice(index, 1);
     setTaskItems(itemsCopy);
+    updateData();
+  };
+
+  const updateData = async () => {
+    try {
+      await AsyncStorage.setItem('tasks', JSON.stringify(taskItems));
+    } catch (error) {
+      console.log('addtextHandler ===== ' + error);
+    }
   };
 
   return (
@@ -36,8 +56,13 @@ const App = () => {
           {/* here is where all tasks go */}
           <View>
             {taskItems.map((item, index) => {
+              updateData();
               return (
-                <TouchableOpacity key={index} onPress={() => removeTask(index)}>
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => {
+                    removeTask(index);
+                  }}>
                   <Task text={item} />
                 </TouchableOpacity>
               );
