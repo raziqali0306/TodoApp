@@ -29,21 +29,21 @@ const App = () => {
     Keyboard.dismiss();
     setTaskItems([...taskItems, task]);
     setTask(null);
-    // updateData();
+    try {
+      await AsyncStorage.setItem('tasks', JSON.stringify([...taskItems, task]));
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const removeTask = async index => {
     let itemsCopy = [...taskItems];
     itemsCopy.splice(index, 1);
     setTaskItems(itemsCopy);
-    updateData();
-  };
-
-  const updateData = async () => {
     try {
-      await AsyncStorage.setItem('tasks', JSON.stringify(taskItems));
+      await AsyncStorage.setItem('tasks', JSON.stringify(itemsCopy));
     } catch (error) {
-      console.log('addtextHandler ===== ' + error);
+      console.log(error);
     }
   };
 
@@ -56,7 +56,6 @@ const App = () => {
           {/* here is where all tasks go */}
           <View>
             {taskItems.map((item, index) => {
-              updateData();
               return (
                 <TouchableOpacity
                   key={index}
