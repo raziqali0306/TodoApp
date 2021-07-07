@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   StyleSheet,
   Text,
@@ -10,10 +10,27 @@ import {
   ScrollView,
 } from 'react-native';
 import Task from './Components/Task';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const App = () => {
-  const [task, setTask] = useState();
+  const [task, setTask] = useState('');
   const [taskItems, setTaskItems] = useState([]);
+
+  useEffect(async () => {
+    let items = [];
+    items = JSON.parse(await AsyncStorage.getItem('tasks'));
+    if (items != null) {
+      setTaskItems(items);
+    }
+  }, []);
+
+  useEffect(async () => {
+    try {
+      await AsyncStorage.setItem('tasks', JSON.stringify(taskItems));
+    } catch (error) {
+      console.log(error);
+    }
+  }, [taskItems]);
 
   const addTextHandler = () => {
     Keyboard.dismiss();
@@ -37,7 +54,11 @@ const App = () => {
           <View>
             {taskItems.map((item, index) => {
               return (
-                <TouchableOpacity key={index} onPress={() => removeTask(index)}>
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => {
+                    removeTask(index);
+                  }}>
                   <Task text={item} />
                 </TouchableOpacity>
               );
@@ -87,7 +108,6 @@ const styles = StyleSheet.create({
   },
 
   // Tasks
-
   TaskinputContainer: {
     marginTop: 15,
     position: 'absolute',
