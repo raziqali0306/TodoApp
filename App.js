@@ -19,32 +19,29 @@ const App = () => {
   useEffect(async () => {
     let items = [];
     items = JSON.parse(await AsyncStorage.getItem('tasks'));
-    console.log(items);
     if (items != null) {
       setTaskItems(items);
     }
   }, []);
 
+  useEffect(async () => {
+    try {
+      await AsyncStorage.setItem('tasks', JSON.stringify(taskItems));
+    } catch (error) {
+      console.log(error);
+    }
+  }, [taskItems]);
+
   const addTextHandler = async () => {
     Keyboard.dismiss();
     setTaskItems([...taskItems, task]);
     setTask(null);
-    try {
-      await AsyncStorage.setItem('tasks', JSON.stringify([...taskItems, task]));
-    } catch (error) {
-      console.log(error);
-    }
   };
 
   const removeTask = async index => {
     let itemsCopy = [...taskItems];
     itemsCopy.splice(index, 1);
     setTaskItems(itemsCopy);
-    try {
-      await AsyncStorage.setItem('tasks', JSON.stringify(itemsCopy));
-    } catch (error) {
-      console.log(error);
-    }
   };
 
   return (
@@ -92,6 +89,7 @@ const App = () => {
 const styles = StyleSheet.create({
   // Todo
   container: {
+    color: '#000000',
     flex: 1,
     backgroundColor: '#F9F9F9',
   },
